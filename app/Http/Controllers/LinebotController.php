@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use DB;
 use PDO;
+use Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
