@@ -34,5 +34,8 @@ class LinebotController extends Controller
         $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient($channelToken);
         $bot = new \LINE\LINEBot($httpClient, ['channelSecret' => $channelSecret]);
 
+        $this->resp['status'] = true;
+        $this->resp['err_msg'] = "";
+        return Response::json($this->resp);
     }
 }
