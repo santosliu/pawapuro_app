@@ -15,7 +15,7 @@ use GuzzleHttp\Client;
 
 class LinebotController extends Controller
 {
-    public function msgSend(Request $request){
+    public function msgSend($msgData){
         $channelToken = config('bot.channel_token');
         $channelSecret = config('bot.channel_secret');
         $channelId = config('bot.channel_id');
@@ -23,7 +23,12 @@ class LinebotController extends Controller
         $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient($channelToken);
         $bot = new \LINE\LINEBot($httpClient, ['channelSecret' => $channelSecret]);
 
-        dd($bot);
+        if ($msgData->type == "message"){
+            if ($msgData->message->text == "你好") {
+                $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder('你也好啊～');
+                $response = $bot->replyMessage($msgData->replyToken, $textMessageBuilder);
+            }
+        }
 
     }
 
@@ -35,10 +40,12 @@ class LinebotController extends Controller
         $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient($channelToken);
         $bot = new \LINE\LINEBot($httpClient, ['channelSecret' => $channelSecret]);
 
-        Log::info($request);
+        $msgData = $request->events;
 
-        $this->resp['status'] = true;
-        $this->resp['err_msg'] = "";
+        //處理訊息
+        $this->msgSend($msgData);
+
+        $this->resp['status'] = true;        
         return Response::json($this->resp);
     }
 }
