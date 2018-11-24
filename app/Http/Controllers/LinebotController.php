@@ -23,13 +23,19 @@ class LinebotController extends Controller
         $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient($channelToken);
         $bot = new \LINE\LINEBot($httpClient, ['channelSecret' => $channelSecret]);
 
-        if ($msgData->type == "message"){
-            if ($msgData->message->text == "你好") {
-                $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder('你也好啊～');
-                $response = $bot->replyMessage($msgData->replyToken, $textMessageBuilder);
-            }
-        }
+        foreach ($msgData as $msg) {
+            $replyToken = $msg['replyToken'];
+            #$sendMessage = $msg['message']['text'];
+            
+            if (strpos($msg['message']['text'],'本期活動') !== false ){
+                $sendMessage = "本期活動為 北斗神拳合作活動 詳情請看連結 http://pawamobile.blogspot.com/2018/11/20181122.html";
 
+                $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($sendMessage);
+                $response = $bot->replyMessage($replyToken, $textMessageBuilder);
+            }
+            
+            
+        }
     }
 
     public function msgReceive(Request $request){
