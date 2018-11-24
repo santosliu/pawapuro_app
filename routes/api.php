@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/line/receive','LinebotController@msgReceive');
+Route::post('/line/receive','LinebotController@msgReceive');
 Route::get('/line/send','LinebotController@msgSend');
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
