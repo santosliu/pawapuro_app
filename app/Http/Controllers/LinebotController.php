@@ -9,7 +9,7 @@ use Response;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use App\Model\Keywords;
+use App\Models\Keywords;
 
 class LinebotController extends Controller
 {
@@ -65,7 +65,7 @@ class LinebotController extends Controller
         // $bot = new \LINE\LINEBot($httpClient, ['channelSecret' => $channelSecret]);
 
         $msgData = $request->events;
-        Log::Info($request);        
+        Log::info($request);        
         $this->msgSend($msgData);
 
         $this->resp['status'] = true;        
