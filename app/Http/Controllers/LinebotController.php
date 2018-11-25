@@ -2,53 +2,70 @@
 
 namespace App\Http\Controllers;
 
-use DB;
-use PDO;
 use Log;
+use Redis;
+use Response;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use Validator;
-use Response;
-
-use GuzzleHttp\Client;
+use App\Model\Keywords;
 
 class LinebotController extends Controller
 {
-    public function msgSend($msgData){
-        $channelToken = config('bot.channel_token');
-        $channelSecret = config('bot.channel_secret');
-        $channelId = config('bot.channel_id');
-        
-        $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient($channelToken);
-        $bot = new \LINE\LINEBot($httpClient, ['channelSecret' => $channelSecret]);
+    private $channelToken;
+    private $channelSecret;
+    private $channelId;
+    private $httpClient;
+    private $bot;
+    private $keywords;
 
+    public function __construct()
+    {
+        $this->channelToken = config('bot.channel_token');
+        $this->channelSecret = config('bot.channel_secret');
+        $this->channelId = config('bot.channel_id');
+        
+        $this->httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient($this->channelToken);
+        $this->bot = new \LINE\LINEBot($this->httpClient, ['channelSecret' => $this->channelSecret]);        
+
+        if (env('APP_ENV') == 'production') {
+            if (Redis::exists('keywords:list')) {
+                $keywords = Redis::get('keywords:list');
+            } else {
+                $this->keywords = Keywords::get();
+                Redis::set('keywords:list', json_encode($data), 'EX', 360);
+            }
+        } 
+
+        $this->keywords = Keywords::get();
+        
+    }
+
+    public function msgSend($msgData){
+        
         foreach ($msgData as $msg) {
             $replyToken = $msg['replyToken'];
-            #$sendMessage = $msg['message']['text'];
             
-            if (strpos($msg['message']['text'],'本期活動') !== false ){
-                $sendMessage = "本期活動為 北斗神拳合作活動 詳情請看連結 http://pawamobile.blogspot.com/2018/11/20181122.html";
-
-                $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($sendMessage);
-                $response = $bot->replyMessage($replyToken, $textMessageBuilder);
+            foreach ($keywords as $data) {
+                if ($msg['message']['text'] == $data->keyword){
+                    $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($data->reply_content);
+                    $response = $this->bot->replyMessage($replyToken, $textMessageBuilder);
+                }    
             }
-            
-            
         }
     }
 
     public function msgReceive(Request $request){
-        $channelToken = config('bot.channel_token');
-        $channelSecret = config('bot.channel_secret');
-        $channelId = config('bot.channel_id');
+        // $channelToken = config('bot.channel_token');
+        // $channelSecret = config('bot.channel_secret');
+        // $channelId = config('bot.channel_id');
         
-        $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient($channelToken);
-        $bot = new \LINE\LINEBot($httpClient, ['channelSecret' => $channelSecret]);
+        // $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient($channelToken);
+        // $bot = new \LINE\LINEBot($httpClient, ['channelSecret' => $channelSecret]);
 
         $msgData = $request->events;
-
-        //處理訊息
+        Log::Info($request);        
         $this->msgSend($msgData);
 
         $this->resp['status'] = true;        
