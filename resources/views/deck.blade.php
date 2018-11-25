@@ -4,8 +4,8 @@
 @section('sidebar')
   <h1 class="my-4"></h1>
   <div class="list-group">
-    <a href="https://www.facebook.com/pawaresearch/" target="_blank" class="list-group-item">FB粉絲專頁</a>
-    <a href="https://www.facebook.com/groups/142880026502586/" target="_blank" class="list-group-item">FB社團</a>
+    <a href="/deck/evil" class="list-group-item">惠比留高校</a>
+    <a href="/deck/fullpower" class="list-group-item">全力學園高校</a>
   </div>
 @endsection
 

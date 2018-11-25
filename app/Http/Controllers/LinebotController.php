@@ -52,7 +52,7 @@ class LinebotController extends Controller
                     //從 Imgur 隨機挖圖出來
                 }
 
-                $keywords = json_decode($this->keywords);
+                $keywords = $this->keywords;
                 foreach ($keywords as $data) {
                     if ($msg['message']['text'] == $data->keyword){
                         $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($data->reply_content);
