@@ -2,11 +2,7 @@
 @extends('master')
 
 @section('sidebar')
-  <h1 class="my-4"></h1>
-  <div class="list-group">
-    <a href="https://www.facebook.com/pawaresearch/" target="_blank" class="list-group-item">FB粉絲專頁</a>
-    <a href="https://www.facebook.com/groups/142880026502586/" target="_blank" class="list-group-item">FB社團</a>
-  </div>
+  <a href="https://www.facebook.com/groups/142880026502586/" target="_blank" class="list-group-item">FB社團</a>
 @endsection
 
 @section('content')

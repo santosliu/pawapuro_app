@@ -2,11 +2,8 @@
 @extends('master')
 
 @section('sidebar')
-  <h1 class="my-4"></h1>
-  <div class="list-group">
     <a href="/deck/evil" class="list-group-item">惠比留高校</a>
     <a href="/deck/fullpower" class="list-group-item">全力學園高校</a>
-  </div>
 @endsection
 
 @section('content')

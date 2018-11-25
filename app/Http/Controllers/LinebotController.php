@@ -46,7 +46,7 @@ class LinebotController extends Controller
         foreach ((array)$msgData as $msg) {
             $replyToken = $msg['replyToken'];
             
-            if ($msg['type'] == 'message') {
+            if ($msg['message']['type'] == 'text') {
                 
                 if ($msg['message']['text'] == "抽圖") {
                     //從 Imgur 隨機挖圖出來
