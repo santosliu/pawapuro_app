@@ -34,12 +34,11 @@ class LinebotController extends Controller
                 $keywords = Redis::get('keywords:list');
             } else {
                 $this->keywords = Keywords::get();
-                Redis::set('keywords:list', json_encode($data), 'EX', 360);
+                Redis::set('keywords:list', json_encode($this->keywords), 'EX', 360);
             }
-        } 
-
-        $this->keywords = Keywords::get();
-        
+        } else {
+            $this->keywords = Keywords::get();
+        }
     }
 
     public function msgSend($msgData){
@@ -47,7 +46,7 @@ class LinebotController extends Controller
         foreach ($msgData as $msg) {
             $replyToken = $msg['replyToken'];
             
-            foreach ($keywords as $data) {
+            foreach ($this->keywords as $data) {
                 if ($msg['message']['text'] == $data->keyword){
                     $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($data->reply_content);
                     $response = $this->bot->replyMessage($replyToken, $textMessageBuilder);
