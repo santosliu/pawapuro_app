@@ -31,7 +31,7 @@ class LinebotController extends Controller
 
         if (env('APP_ENV') == 'production') {
             if (Redis::exists('keywords:list')) {
-                $keywords = Redis::get('keywords:list');
+                $this->keywords = json_decode(Redis::get('keywords:list'));
             } else {
                 $this->keywords = Keywords::get();
                 Redis::set('keywords:list', json_encode($this->keywords), 'EX', 360);
@@ -43,14 +43,22 @@ class LinebotController extends Controller
 
     public function msgSend($msgData){
         
-        foreach ($msgData as $msg) {
+        foreach ((array)$msgData as $msg) {
             $replyToken = $msg['replyToken'];
             
-            foreach ($this->keywords as $data) {
-                if ($msg['message']['text'] == $data->keyword){
-                    $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($data->reply_content);
-                    $response = $this->bot->replyMessage($replyToken, $textMessageBuilder);
-                }    
+            if ($msg['type'] == 'message') {
+                
+                if ($msg['message']['text'] == "抽圖") {
+                    //從 Imgur 隨機挖圖出來
+                }
+
+                $keywords = json_decode($this->keywords);
+                foreach ($keywords as $data) {
+                    if ($msg['message']['text'] == $data->keyword){
+                        $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($data->reply_content);
+                        $response = $this->bot->replyMessage($replyToken, $textMessageBuilder);
+                    }    
+                }
             }
         }
     }
