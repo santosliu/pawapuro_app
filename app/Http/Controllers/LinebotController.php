@@ -52,19 +52,33 @@ class LinebotController extends Controller
                     //從 Imgur 隨機挖圖出來
                 }
 
+                //貼海豹圖
                 if ($msg['message']['text'] == "曬海豹") {
-                    //貼海豹圖
-                    $this->bot->replyMessage(array(
-                        'replyToken' => $replyToken,
-                        'messages' => array(
-                            array(
-                                'type' => 'image',
-                                'originalContentUrl' => 'https://i.imgur.com/3epMKoW.png', 
-                                'previewImageUrl' => 'https://i.imgur.com/3epMKoW.png' 
-                            )
-                        )
-                    ));
+                    
+                    $seals = [
+                        'https://i.imgur.com/3epMKoW.png',
+                        'https://i.imgur.com/HjclLnJ.png',
+                        'https://i.imgur.com/7JGCOXS.png',
+                        'https://i.imgur.com/qOpaf85.png',
+                        'https://i.imgur.com/45PWgTR.png',
+                        'https://i.imgur.com/zx0WZxY.png',
+                        'https://i.imgur.com/MHyFRfg.png',
+                        'https://i.imgur.com/XWkyn4G.png',
+                        'https://i.imgur.com/3aP1ZWa.png',
+                        'https://i.imgur.com/YWs7I2Q.png',
+                        'https://i.imgur.com/7cb9pta.png',
+                        'https://i.imgur.com/xAK6v3K.png',
+                        'https://i.imgur.com/UPCa816.png',
+                        'https://i.imgur.com/Be4h9ii.png',
+                        'https://i.imgur.com/MaJ94YM.png',
+                        'https://i.imgur.com/7Gtk44e.png',
+                        'https://i.imgur.com/7l5x3vp.png',
+                        'https://i.imgur.com/vDsIDvM.png',
+                        'https://i.imgur.com/qJQ1inW.png',
+                    ];
 
+                    $imageMessageBuilder = new \LINE\LINEBot\MessageBuilder\ImageMessageBuilder($seals[rand(0,count($seals))], $seals[rand(0,count($seals))]);
+                    $this->bot->replyMessage($replyToken, $imageMessageBuilder);
                 }
 
                 $keywords = $this->keywords;
