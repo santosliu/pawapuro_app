@@ -72,8 +72,8 @@ class LinebotController extends Controller
                         'https://i.imgur.com/Be4h9ii.png',
                         'https://i.imgur.com/MaJ94YM.png',
                     ];
-
-                    $imageMessageBuilder = new \LINE\LINEBot\MessageBuilder\ImageMessageBuilder($seals[rand(0,count($seals))], $seals[rand(0,count($seals))]);
+                    $seal_pic = $seals[rand(0,count($seals))];
+                    $imageMessageBuilder = new \LINE\LINEBot\MessageBuilder\ImageMessageBuilder($seal_pic, $seal_pic);
                     $this->bot->replyMessage($replyToken, $imageMessageBuilder);
                 }
 
