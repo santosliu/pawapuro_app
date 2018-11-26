@@ -52,11 +52,26 @@ class LinebotController extends Controller
                     //從 Imgur 隨機挖圖出來
                 }
 
+                if ($msg['message']['text'] == "曬海豹") {
+                    //貼海豹圖
+                    $this->bot->replyMessage(array(
+                        'replyToken' => $replyToken,
+                        'messages' => array(
+                            array(
+                                'type' => 'image',
+                                'originalContentUrl' => 'https://i.imgur.com/3epMKoW.png', 
+                                'previewImageUrl' => 'https://i.imgur.com/3epMKoW.png' 
+                            )
+                        )
+                    ));
+
+                }
+
                 $keywords = $this->keywords;
                 foreach ($keywords as $data) {
                     if ($msg['message']['text'] == $data->keyword){
                         $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($data->reply_content);
-                        $response = $this->bot->replyMessage($replyToken, $textMessageBuilder);
+                        $this->bot->replyMessage($replyToken, $textMessageBuilder);
                     }    
                 }
             }
@@ -64,15 +79,8 @@ class LinebotController extends Controller
     }
 
     public function msgReceive(Request $request){
-        // $channelToken = config('bot.channel_token');
-        // $channelSecret = config('bot.channel_secret');
-        // $channelId = config('bot.channel_id');
-        
-        // $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient($channelToken);
-        // $bot = new \LINE\LINEBot($httpClient, ['channelSecret' => $channelSecret]);
-
         $msgData = $request->events;
-        Log::info($request);        
+        // Log::info($request);        
         $this->msgSend($msgData);
 
         $this->resp['status'] = true;        
