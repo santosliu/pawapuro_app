@@ -53,7 +53,7 @@ class LinebotController extends Controller
                 }
 
                 //貼海豹圖
-                if ($msg['message']['text'] == "曬海豹") {
+                if ($msg['message']['text'] == "你太歐澤") {
                     
                     $seals = [
                         'https://i.imgur.com/3epMKoW.png',
@@ -71,10 +71,6 @@ class LinebotController extends Controller
                         'https://i.imgur.com/UPCa816.png',
                         'https://i.imgur.com/Be4h9ii.png',
                         'https://i.imgur.com/MaJ94YM.png',
-                        'https://i.imgur.com/7Gtk44e.png',
-                        'https://i.imgur.com/7l5x3vp.png',
-                        'https://i.imgur.com/vDsIDvM.png',
-                        'https://i.imgur.com/qJQ1inW.png',
                     ];
 
                     $imageMessageBuilder = new \LINE\LINEBot\MessageBuilder\ImageMessageBuilder($seals[rand(0,count($seals))], $seals[rand(0,count($seals))]);
