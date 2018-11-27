@@ -53,9 +53,10 @@ class LinebotController extends Controller
         ]);
         
         $imageBody = $response->getBody();
-        Log::info($images);
+        $filename = public_path('images/girls/'.uniqid().'.png');
+        file_put_contents($filename, $imageBody);
 
-        // return $filepath;
+        return $filename;
     }
 
     //取得相本內容
@@ -93,7 +94,8 @@ class LinebotController extends Controller
                 $user_id = $msg['source']['userId'];
                 $pic_id = $msg['message']['id'];
 
-                $this->downloadPic($pic_id);
+                $filename = $this->downloadPic($pic_id);
+                Log::info($filename);
                 //curl -v -X GET https://api.line.me/v2/bot/message/8923937667228/content -H 'Authorization: Bearer Tvyb9ZQ2Fe0qFPhdHMSqwPEoipCdrmbEicY6VcVssD1TiK4i9/y8lMAVvsJNMtXZ5NLOYJEORz42ydC7p1fRAg7a3ucFi1ixSj0dfHe/axa7jWo28x88PqQrJKYqrUqZta+w52C88psQ3Rg4fNZT/QdB04t89/1O/w1cDnyilFU='
 
                 // if ($userId == '') {
