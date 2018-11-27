@@ -98,43 +98,46 @@ class LinebotController extends Controller
 
     //上傳指定檔案到指定相本
     public function uploadAlbum($filename,$album_id){
-        $client = new Client();
+        // $client = new Client();
         
-        $handle = fopen($filename, "r");
-        $data = fread($handle, filesize($filename));
-
-        $response = $client->post('https://api.imgur.com/3/image',[
-            'verify' => false,
-            'headers' => [
-                'Authorization: Bearer '.$this->imgurAccesstoken,
-                'Content-Type' => 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
-            ],
-            'form_params' => [
-                'album' => $album_id,
-                'image' => base64_encode($data),
-            ],
-        ]);
-
         // $handle = fopen($filename, "r");
         // $data = fread($handle, filesize($filename));
-        // $pvars   = array(
-        //     'image' => base64_encode($data),
-        //     'album' => $album_id,
-        // );
 
-        // $timeout = 30;
-        // $curl = curl_init();
-        // curl_setopt($curl, CURLOPT_URL, 'https://api.imgur.com/3/image.json');
-        // curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
-        // curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-        //     #'Authorization: Client-ID '.$client_id,
-        //     'Authorization: Bearer '.$this->imgurAccesstoken,
-        // ));
-        // curl_setopt($curl, CURLOPT_POST, 1);
-        // curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        // curl_setopt($curl, CURLOPT_POSTFIELDS, $pvars);
-        // $response = curl_exec($curl);
-        // curl_close ($curl);
+        // $response = $client->post('https://api.imgur.com/3/image',[
+        //     'verify' => false,
+        //     'headers' => [
+        //         // 'Authorization: Bearer '.$this->imgurAccesstoken,
+        //         'Authorization: Bearer '.$this->imgurClientID,
+        //         'Content-Type' => 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
+        //     ],
+        //     'form_params' => [
+        //         // 'album' => $album_id,
+        //         'image' => base64_encode($data),
+        //     ],
+        // ]);
+
+        //存到資料庫備用
+
+        $handle = fopen($filename, "r");
+        $data = fread($handle, filesize($filename));
+        $pvars   = array(
+            'image' => base64_encode($data),
+            'album' => $album_id,
+        );
+
+        $timeout = 30;
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, 'https://api.imgur.com/3/image.json');
+        curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            #'Authorization: Client-ID '.$client_id,
+            'Authorization: Bearer '.$this->imgurAccesstoken,
+        ));
+        curl_setopt($curl, CURLOPT_POST, 1);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $pvars);
+        $response = curl_exec($curl);
+        curl_close ($curl);
 
         Log::info($response);
     }
