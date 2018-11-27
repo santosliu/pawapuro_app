@@ -71,10 +71,21 @@ class LinebotController extends Controller
         foreach ((array)$msgData as $msg) {
             $replyToken = $msg['replyToken'];
             
+            //抓小光貼的妹子圖丟到 Imgur 上
+            if ($msg['message']['type'] == 'image') {
+                Log::info($msg);
+            }
+
+
             if ($msg['message']['type'] == 'text') {
                 
-                if ($msg['message']['text'] == "抽圖") {
-                    //從 Imgur 隨機挖圖出來
+                //貼妹子圖
+                if ($msg['message']['text'] == "光大濕") {
+                    $girls = $this->getAlbum('RGN0xHm')->data;
+                    $girl_pic = $girls[rand(1,count($girls))-1]->link;
+                    
+                    $imageMessageBuilder = new \LINE\LINEBot\MessageBuilder\ImageMessageBuilder($girl_pic, $girl_pic);
+                    $this->bot->replyMessage($replyToken, $imageMessageBuilder);
                 }
 
                 //貼海豹圖
@@ -86,6 +97,7 @@ class LinebotController extends Controller
                     $this->bot->replyMessage($replyToken, $imageMessageBuilder);
                 }
 
+                //一般關鍵字回應
                 $keywords = $this->keywords;
                 foreach ($keywords as $data) {
                     if ($msg['message']['text'] == $data->keyword){
