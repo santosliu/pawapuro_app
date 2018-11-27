@@ -80,24 +80,8 @@ class LinebotController extends Controller
                 //貼海豹圖
                 if ($msg['message']['text'] == "你太歐澤") {
                     $seals = $this->getAlbum('Lnpbn3H')->data;
-                    // $seals = [
-                    //     'https://i.imgur.com/3epMKoW.png',
-                    //     'https://i.imgur.com/HjclLnJ.png',
-                    //     'https://i.imgur.com/7JGCOXS.png',
-                    //     'https://i.imgur.com/qOpaf85.png',
-                    //     'https://i.imgur.com/45PWgTR.png',
-                    //     'https://i.imgur.com/zx0WZxY.png',
-                    //     'https://i.imgur.com/MHyFRfg.png',
-                    //     'https://i.imgur.com/XWkyn4G.png',
-                    //     'https://i.imgur.com/3aP1ZWa.png',
-                    //     'https://i.imgur.com/YWs7I2Q.png',
-                    //     'https://i.imgur.com/7cb9pta.png',
-                    //     'https://i.imgur.com/xAK6v3K.png',
-                    //     'https://i.imgur.com/UPCa816.png',
-                    //     'https://i.imgur.com/Be4h9ii.png',
-                    //     'https://i.imgur.com/MaJ94YM.png',
-                    // ];
-                    $seal_pic = $seals[rand(0,count($seals))]->link;
+                    $seal_pic = $seals[rand(1,count($seals))-1]->link;
+                    
                     $imageMessageBuilder = new \LINE\LINEBot\MessageBuilder\ImageMessageBuilder($seal_pic, $seal_pic);
                     $this->bot->replyMessage($replyToken, $imageMessageBuilder);
                 }
