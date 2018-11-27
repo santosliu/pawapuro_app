@@ -93,10 +93,13 @@ class LinebotController extends Controller
                 'Authorization' => 'Client-ID fa8c58678371db9',
                 'Content-Type' => 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
             ],
-            'form image' => file_get_contents($filename),
-            'album' => $album_id
+            'body' => [
+                'album' => $album_id,
+                'image' => base64_encode($filename),
+            ],
         ]);
 
+        Log::info(base64_encode($filename));
         Log::info($response);
     }
 
