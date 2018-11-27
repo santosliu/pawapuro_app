@@ -53,7 +53,7 @@ class LinebotController extends Controller
         ]);
         
         $imageBody = $response->getBody();
-        $filename = public_path('images/girls/'.uniqid().'.png');
+        $filename = storage_path('girls/'.uniqid().'.png');
         file_put_contents($filename, $imageBody);
 
         return $filename;
@@ -83,6 +83,22 @@ class LinebotController extends Controller
         return $images;
     }
 
+    //上傳指定檔案到指定相本
+    public function uploadAlbum($filename,$album_id){
+        $client = new Client();
+        
+        $response = $client->post('https://api.imgur.com/3/image',[
+            'verify' => false,
+            'headers' => [
+                'Authorization' => 'Client-ID fa8c58678371db9',
+                'Content-Type' => 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
+            ],
+            'form image' => file_get_contents($filename),
+            'album' => $album_id
+        ]);
+
+        Log::info($response);
+    }
 
     public function msgSend($msgData){
         
@@ -95,9 +111,7 @@ class LinebotController extends Controller
                 $pic_id = $msg['message']['id'];
 
                 $filename = $this->downloadPic($pic_id);
-                Log::info($filename);
-                //curl -v -X GET https://api.line.me/v2/bot/message/8923937667228/content -H 'Authorization: Bearer Tvyb9ZQ2Fe0qFPhdHMSqwPEoipCdrmbEicY6VcVssD1TiK4i9/y8lMAVvsJNMtXZ5NLOYJEORz42ydC7p1fRAg7a3ucFi1ixSj0dfHe/axa7jWo28x88PqQrJKYqrUqZta+w52C88psQ3Rg4fNZT/QdB04t89/1O/w1cDnyilFU='
-
+                $this->uploadAlbum($filename,'RGN0xHm');
                 // if ($userId == '') {
 
                 // }
