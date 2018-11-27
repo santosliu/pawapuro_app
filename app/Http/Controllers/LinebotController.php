@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\Keywords;
+use GuzzleHttp\Client;
 
 class LinebotController extends Controller
 {
@@ -41,6 +42,30 @@ class LinebotController extends Controller
         }
     }
 
+    public function getAlbum($hash){
+        $images = "";
+
+        if (Redis::exists($hash)) {
+            $images = json_decode(Redis::get($hash));
+        } else {
+            $client = new Client();
+        
+            $response = $client->get('https://api.imgur.com/3/album/'.$hash.'/images',[
+                'verify' => false,
+                'headers' => [
+                    'Authorization' => 'Client-ID fa8c58678371db9',
+                ],
+            ]);
+        
+            $images = json_decode($response->getBody());
+
+            Redis::set($hash, json_encode($images), 'EX', 360);
+        }
+        
+        return $images;
+    }
+
+
     public function msgSend($msgData){
         
         foreach ((array)$msgData as $msg) {
@@ -54,25 +79,25 @@ class LinebotController extends Controller
 
                 //貼海豹圖
                 if ($msg['message']['text'] == "你太歐澤") {
-                    
-                    $seals = [
-                        'https://i.imgur.com/3epMKoW.png',
-                        'https://i.imgur.com/HjclLnJ.png',
-                        'https://i.imgur.com/7JGCOXS.png',
-                        'https://i.imgur.com/qOpaf85.png',
-                        'https://i.imgur.com/45PWgTR.png',
-                        'https://i.imgur.com/zx0WZxY.png',
-                        'https://i.imgur.com/MHyFRfg.png',
-                        'https://i.imgur.com/XWkyn4G.png',
-                        'https://i.imgur.com/3aP1ZWa.png',
-                        'https://i.imgur.com/YWs7I2Q.png',
-                        'https://i.imgur.com/7cb9pta.png',
-                        'https://i.imgur.com/xAK6v3K.png',
-                        'https://i.imgur.com/UPCa816.png',
-                        'https://i.imgur.com/Be4h9ii.png',
-                        'https://i.imgur.com/MaJ94YM.png',
-                    ];
-                    $seal_pic = $seals[rand(0,count($seals))];
+                    $seals = $this->getAlbum('Lnpbn3H')->data;
+                    // $seals = [
+                    //     'https://i.imgur.com/3epMKoW.png',
+                    //     'https://i.imgur.com/HjclLnJ.png',
+                    //     'https://i.imgur.com/7JGCOXS.png',
+                    //     'https://i.imgur.com/qOpaf85.png',
+                    //     'https://i.imgur.com/45PWgTR.png',
+                    //     'https://i.imgur.com/zx0WZxY.png',
+                    //     'https://i.imgur.com/MHyFRfg.png',
+                    //     'https://i.imgur.com/XWkyn4G.png',
+                    //     'https://i.imgur.com/3aP1ZWa.png',
+                    //     'https://i.imgur.com/YWs7I2Q.png',
+                    //     'https://i.imgur.com/7cb9pta.png',
+                    //     'https://i.imgur.com/xAK6v3K.png',
+                    //     'https://i.imgur.com/UPCa816.png',
+                    //     'https://i.imgur.com/Be4h9ii.png',
+                    //     'https://i.imgur.com/MaJ94YM.png',
+                    // ];
+                    $seal_pic = $seals[rand(0,count($seals))]->link;
                     $imageMessageBuilder = new \LINE\LINEBot\MessageBuilder\ImageMessageBuilder($seal_pic, $seal_pic);
                     $this->bot->replyMessage($replyToken, $imageMessageBuilder);
                 }
