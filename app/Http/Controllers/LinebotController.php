@@ -85,21 +85,35 @@ class LinebotController extends Controller
 
     //上傳指定檔案到指定相本
     public function uploadAlbum($filename,$album_id){
-        $client = new Client();
+        // $client = new Client();
         
-        $response = $client->post('https://api.imgur.com/3/image',[
-            'verify' => false,
-            'headers' => [
-                'Authorization' => 'Client-ID fa8c58678371db9',
-                'Content-Type' => 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
-            ],
-            'body' => [
-                'album' => $album_id,
-                'image' => base64_encode($filename),
-            ],
-        ]);
+        // $response = $client->post('https://api.imgur.com/3/image',[
+        //     'verify' => false,
+        //     'headers' => [
+        //         'Authorization' => 'Client-ID fa8c58678371db9',
+        //         'Content-Type' => 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
+        //     ],
+        //     'body' => [
+        //         'album' => $album_id,
+        //         'image' => base64_encode($filename),
+        //     ],
+        // ]);
 
-        Log::info(base64_encode($filename));
+        $client_id="fa8c58678371db9";
+        $handle = fopen($filename, "r");
+        $data = fread($handle, filesize($filename));
+        $pvars   = array('image' => base64_encode($data));
+        $timeout = 30;
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, 'https://api.imgur.com/3/image.json');
+        curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: Client-ID ' . $client_id));
+        curl_setopt($curl, CURLOPT_POST, 1);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $pvars);
+        $response = curl_exec($curl);
+        curl_close ($curl);
+
         Log::info($response);
     }
 
