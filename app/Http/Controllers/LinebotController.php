@@ -42,6 +42,23 @@ class LinebotController extends Controller
         }
     }
 
+    public function downloadPic($pic_id){
+        $client = new Client();
+        //curl -v -X GET https://api.line.me/v2/bot/message/8923937667228/content -H 'Authorization: Bearer Tvyb9ZQ2Fe0qFPhdHMSqwPEoipCdrmbEicY6VcVssD1TiK4i9/y8lMAVvsJNMtXZ5NLOYJEORz42ydC7p1fRAg7a3ucFi1ixSj0dfHe/axa7jWo28x88PqQrJKYqrUqZta+w52C88psQ3Rg4fNZT/QdB04t89/1O/w1cDnyilFU='
+        $response = $client->get('https://api.line.me/v2/bot/message/'.$pic_id.'/content',[
+            'verify' => false,
+            'headers' => [
+                'Authorization' => 'Bearer '.$this->channelToken,
+            ],
+        ]);
+        
+        $imageBody = $response->getBody();
+        Log::info($images);
+
+        // return $filepath;
+    }
+
+    //取得相本內容
     public function getAlbum($hash){
         $images = "";
 
@@ -73,7 +90,15 @@ class LinebotController extends Controller
             
             //抓小光貼的妹子圖丟到 Imgur 上
             if ($msg['message']['type'] == 'image') {
-                Log::info($msg);
+                $user_id = $msg['source']['userId'];
+                $pic_id = $msg['message']['id'];
+
+                $this->downloadPic($pic_id);
+                //curl -v -X GET https://api.line.me/v2/bot/message/8923937667228/content -H 'Authorization: Bearer Tvyb9ZQ2Fe0qFPhdHMSqwPEoipCdrmbEicY6VcVssD1TiK4i9/y8lMAVvsJNMtXZ5NLOYJEORz42ydC7p1fRAg7a3ucFi1ixSj0dfHe/axa7jWo28x88PqQrJKYqrUqZta+w52C88psQ3Rg4fNZT/QdB04t89/1O/w1cDnyilFU='
+
+                // if ($userId == '') {
+
+                // }
             }
 
 
