@@ -139,7 +139,7 @@ class LinebotController extends Controller
         $response = curl_exec($curl);
         curl_close ($curl);
 
-        Log::info($response);
+        // Log::info($response);
     }
 
     public function msgSend($msgData){
@@ -152,11 +152,10 @@ class LinebotController extends Controller
                 $user_id = $msg['source']['userId'];
                 $pic_id = $msg['message']['id'];
 
-                $filename = $this->downloadPic($pic_id);
-                $this->uploadAlbum($filename,$this->imgurGirlAlbum);
-                // if ($userId == '') {
-
-                // }
+                if ($userId == 'Ueb13bb47744e0b1058177378357c5978') {
+                    $filename = $this->downloadPic($pic_id);
+                    $this->uploadAlbum($filename,$this->imgurGirlAlbum);
+                }
             }
 
 
