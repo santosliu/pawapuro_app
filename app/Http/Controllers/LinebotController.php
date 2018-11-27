@@ -152,7 +152,7 @@ class LinebotController extends Controller
                 $user_id = $msg['source']['userId'];
                 $pic_id = $msg['message']['id'];
 
-                if ($userId == 'Ueb13bb47744e0b1058177378357c5978') {
+                if ($user_id == 'Ueb13bb47744e0b1058177378357c5978') {
                     $filename = $this->downloadPic($pic_id);
                     $this->uploadAlbum($filename,$this->imgurGirlAlbum);
                 }
