@@ -47,11 +47,12 @@ class LinebotController extends Controller
             $this->keywords = Keywords::get();
         }
 
-        $this->ImgurClientID = config('bot.imgur_client_id');
-        $this->ImgurClientSecret = config('bot.imgur_client_secret');
+        $this->imgurClientID = config('bot.imgur_client_id');
+        $this->imgurClientSecret = config('bot.imgur_client_secret');
+        $this->imgurAccesstoken = config('bot.imgur_accesstoken');
 
-        $this->ImgurSealAlbum = config('bot.imgur_seal_album');
-        $this->ImgurGirlAlbum = config('bot.imgur_girl_album');
+        $this->imgurSealAlbum = config('bot.imgur_seal_album');
+        $this->imgurGirlAlbum = config('bot.imgur_girl_album');
     }
 
     //取得 LINE 群圖片
@@ -72,15 +73,15 @@ class LinebotController extends Controller
     }
 
     //取得相本內容
-    public function getAlbum($hash){
+    public function getAlbum($album_id){
         $images = "";
 
-        if (Redis::exists($hash)) {
-            $images = json_decode(Redis::get($hash));
+        if (Redis::exists($album_id)) {
+            $images = json_decode(Redis::get($album_id));
         } else {
             $client = new Client();
         
-            $response = $client->get('https://api.imgur.com/3/album/'.$hash.'/images',[
+            $response = $client->get('https://api.imgur.com/3/album/'.$album_id.'/images',[
                 'verify' => false,
                 'headers' => [
                     'Authorization' => 'Client-ID '.$this->imgurClientID,
@@ -89,22 +90,14 @@ class LinebotController extends Controller
         
             $images = json_decode($response->getBody());
 
-            Redis::set($hash, json_encode($images), 'EX', 360);
+            Redis::set($album_id, json_encode($images), 'EX', 360);
         }
         
         return $images;
     }
 
-    //取得 Imgur Accesstoken
-    public function getImgurAccesstoken(){
-
-    }
-
     //上傳指定檔案到指定相本
     public function uploadAlbum($filename,$album_id){
-        
-        // $accessToken = getImgurAccesstoken();
-        
         // $client = new Client();
         
         // $response = $client->post('https://api.imgur.com/3/image',[
@@ -119,8 +112,6 @@ class LinebotController extends Controller
         //     ],
         // ]);
 
-        $client_id = $this->imgurClientID;
-        $client_secret = $this->imgurClientSecret;
         $handle = fopen($filename, "r");
         $data = fread($handle, filesize($filename));
         $pvars   = array(
@@ -133,8 +124,8 @@ class LinebotController extends Controller
         curl_setopt($curl, CURLOPT_URL, 'https://api.imgur.com/3/image.json');
         curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-            'Authorization: Client-ID '.$client_id,
-            'Authorization: Bearer 4084d3ff3b0c295189c9c7402af7de265f5cf894',
+            #'Authorization: Client-ID '.$client_id,
+            'Authorization: Bearer '.$this->imgurAccesstoken,
         ));
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -156,7 +147,7 @@ class LinebotController extends Controller
                 $pic_id = $msg['message']['id'];
 
                 $filename = $this->downloadPic($pic_id);
-                $this->uploadAlbum($filename,$this->ImgurGirlAlbum);
+                $this->uploadAlbum($filename,$this->imgurGirlAlbum);
                 // if ($userId == '') {
 
                 // }
@@ -167,7 +158,7 @@ class LinebotController extends Controller
                 
                 //貼妹子圖
                 if ($msg['message']['text'] == "光大濕") {
-                    $girls = $this->getAlbum($this->ImgurGirlAlbum)->data;
+                    $girls = $this->getAlbum($this->imgurGirlAlbum)->data;
                     $girl_pic = $girls[rand(1,count($girls))-1]->link;
                     
                     $imageMessageBuilder = new \LINE\LINEBot\MessageBuilder\ImageMessageBuilder($girl_pic, $girl_pic);
@@ -176,7 +167,7 @@ class LinebotController extends Controller
 
                 //貼海豹圖
                 if ($msg['message']['text'] == "你太歐澤") {
-                    $seals = $this->getAlbum($this->ImgurSealAlbum)->data;
+                    $seals = $this->getAlbum($this->imgurSealAlbum)->data;
                     $seal_pic = $seals[rand(1,count($seals))-1]->link;
                     
                     $imageMessageBuilder = new \LINE\LINEBot\MessageBuilder\ImageMessageBuilder($seal_pic, $seal_pic);
