@@ -109,7 +109,7 @@ class LinebotController extends Controller
                 'Authorization: Bearer '.$this->imgurAccesstoken,
                 'Content-Type' => 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
             ],
-            'body' => [
+            'form_params' => [
                 'album' => $album_id,
                 'image' => base64_encode($data),
             ],
