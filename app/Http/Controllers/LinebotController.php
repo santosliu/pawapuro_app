@@ -162,7 +162,7 @@ class LinebotController extends Controller
             if ($msg['message']['type'] == 'text') {
                 
                 //貼妹子圖
-                if ($msg['message']['text'] == "光大濕") {
+                if ($msg['message']['text'] == "光大濕" || $msg['message']['text'] == "抽") {
                     $girls = $this->getAlbum($this->imgurGirlAlbum)->data;
                     $girl_pic = $girls[rand(1,count($girls))-1]->link;
                     
@@ -171,7 +171,7 @@ class LinebotController extends Controller
                 }
 
                 //貼海豹圖
-                if ($msg['message']['text'] == "你太歐澤") {
+                if ($msg['message']['text'] == "你太歐澤" || $msg['message']['text'] == "海豹") {
                     $seals = $this->getAlbum($this->imgurSealAlbum)->data;
                     $seal_pic = $seals[rand(1,count($seals))-1]->link;
                     
