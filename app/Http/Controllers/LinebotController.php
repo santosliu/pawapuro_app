@@ -26,6 +26,7 @@ class LinebotController extends Controller
     private $imgurClientSecret;
     private $imgurSealAlbum;
     private $imgurGirlAlbum;
+    private $imgurFoodAlbum;
 
     public function __construct()
     {
@@ -53,6 +54,7 @@ class LinebotController extends Controller
 
         $this->imgurSealAlbum = config('bot.imgur_seal_album');
         $this->imgurGirlAlbum = config('bot.imgur_girl_album');
+        $this->imgurFoodAlbum = config('bot.imgur_food_album');
     }
 
     //取得 LINE 群圖片
@@ -161,6 +163,15 @@ class LinebotController extends Controller
 
             if ($msg['message']['type'] == 'text') {
                 
+                //貼美食
+                if ($msg['message']['text'] == "美食") {
+                    $foods = $this->getAlbum($this->imgurFoodAlbum)->data;
+                    $food_pic = $foods[rand(1,count($foods))-1]->link;
+                    
+                    $imageMessageBuilder = new \LINE\LINEBot\MessageBuilder\ImageMessageBuilder($food_pic, $food_pic);
+                    $this->bot->replyMessage($replyToken, $imageMessageBuilder);
+                }
+
                 //貼妹子圖
                 if ($msg['message']['text'] == "光大濕" || $msg['message']['text'] == "抽") {
                     $girls = $this->getAlbum($this->imgurGirlAlbum)->data;

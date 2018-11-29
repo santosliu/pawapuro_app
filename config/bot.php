@@ -16,4 +16,5 @@ return [
 
     'imgur_seal_album' => env('IMGUR_SEAL_ALBUM'),
     'imgur_girl_album' => env('IMGUR_GIRL_ALBUM'),
+    'imgur_food_album' => env('IMGUR_FOOD_ALBUM'),
 ];
