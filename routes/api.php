@@ -14,7 +14,10 @@ use Illuminate\Http\Request;
 */
 
 Route::post('/line/receive','LinebotController@msgReceive');
-Route::get('/line/send','LinebotController@msgSend');
+Route::post('/royal/receive','RoyalBotController@msgReceive');
+Route::get('/royal/receive','RoyalBotController@msgReceive');
+
+// Route::get('/line/send','LinebotController@msgSend');
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

@@ -18,6 +18,7 @@ class CreateDeckTable extends Migration
             $table->string('deck_title');
             $table->string('deck_description');
             $table->string('school');
+            $table->string('deck_type');
             $table->string('pic_1');
             $table->string('pic_2');
             $table->string('pic_3');
