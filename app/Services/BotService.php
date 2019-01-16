@@ -29,16 +29,31 @@ class BotService
 
     //關鍵字匹配判斷
     public function reconizeKeywords($msg,$keywords,$channelToken,$channelSecret){
-        foreach ($keywords as $data) {
-            if ($data->type == 'part') {
-                if (strstr($msg['message']['text'],$data->keyword)){
-                    $this->replyByType($data,$msg['replyToken'],$channelToken,$channelSecret);
-                }
-            } 
+        if ($msg['message']['text'] == '關鍵字') {
+            $keywords_list = "目前可用關鍵字如下：";
             
-            if ($data->type == 'full') {
-                if ($msg['message']['text'] == $data->keyword){
-                    $this->replyByType($data,$msg['replyToken'],$channelToken,$channelSecret);
+            foreach ($keywords as $data) {
+                $keywords_list .= $data->keyword.'、';
+            }    
+
+            $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient($channelToken);
+            $bot = new \LINE\LINEBot($httpClient, ['channelSecret' => $channelSecret]);
+
+            $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($keywords_list);
+            $bot->replyMessage($msg['replyToken'], $textMessageBuilder);
+
+        } else {
+            foreach ($keywords as $data) {
+                if ($data->type == 'part') {
+                    if (strstr($msg['message']['text'],$data->keyword)){
+                        $this->replyByType($data,$msg['replyToken'],$channelToken,$channelSecret);
+                    }
+                } 
+                
+                if ($data->type == 'full') {
+                    if ($msg['message']['text'] == $data->keyword){
+                        $this->replyByType($data,$msg['replyToken'],$channelToken,$channelSecret);
+                    }
                 }
             }
         }

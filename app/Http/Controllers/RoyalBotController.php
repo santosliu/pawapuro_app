@@ -47,7 +47,7 @@ class RoyalBotController extends Controller
                     'game' => 'royal'
                 ])->get();
                 
-                Redis::set('keywords:royal:list', json_encode($this->keywords), 'EX', 360);
+                Redis::set('keywords:royal:list', json_encode($this->keywords), 'EX', 60);
             }
         } else {
             $this->keywords = Keywords::get();
