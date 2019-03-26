@@ -15,12 +15,9 @@ Route::get('/', function () {
     return view('index');
 });
 
-Route::get('/test','LinebotController@test');
+// Route::get('/test','LinebotController@test');
 
 //依照學校以及編號，需要兩種顯示方式
 Route::get('/deck/no/{deck_id}', 'DeckController@byDeck');
-Route::get('/deck/school/{school_name}', 'DeckController@bySchool');
+Route::get('/school/{school_id}', 'DeckController@bySchool');
 
-Route::get('/deck', function () {
-    return view('deck');
-});

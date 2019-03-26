@@ -10,9 +10,9 @@
     <title>實況野球研究所</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ URL::asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <!-- Custom styles for this template -->
-    <link href="css/site.css" rel="stylesheet">
+    <link href="{{ URL::asset('css/site.css') }}" rel="stylesheet">
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-1603392-13"></script>
@@ -47,9 +47,14 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="/deck">推薦牌組
-                        </a>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://www.facebook.com/pawaresearch/" target="_blank" class="list-group-item">FB粉絲專頁</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://www.facebook.com/groups/142880026502586/" target="_blank" class="list-group-item">FB社團</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://pawamobile.blogspot.com/" target="_blank" class="list-group-item">部落格</a>
                     </li>
                 </ul>
             </div>
@@ -64,10 +69,7 @@
             <div class="col-lg-3">
 
                 <h1 class="my-4"></h1>
-                <div class="list-group">
-                    <a href="https://www.facebook.com/pawaresearch/" target="_blank" class="list-group-item">FB粉絲專頁</a>
-                    <a href="https://www.facebook.com/groups/142880026502586/" target="_blank" class="list-group-item">FB社團</a>
-                    <a href="http://pawamobile.blogspot.com/" target="_blank" class="list-group-item">部落格</a>
+                <div class="list-group">                    
                     @section('sidebar')
                     @show
                 </div>
@@ -98,8 +100,8 @@
     </footer>
 
     <!-- Bootstrap core JavaScript -->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ URL::asset('vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ URL::asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
 </body>
 

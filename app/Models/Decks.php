@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Decks extends Model
 {
-    // protected $table = 'keywords';
+    protected $table = 'deck';
 }

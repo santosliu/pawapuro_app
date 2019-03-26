@@ -1,22 +1,35 @@
-
+ 
 @extends('master')
 
 @section('sidebar')
-    <a href="/deck/evil" class="list-group-item">惠比留高校</a>
-    <a href="/deck/fullpower" class="list-group-item">全力學園高校</a>
+    <a href="/school/21" class="list-group-item">邊境高校</a>    
+    <a href="/school/20" class="list-group-item">惠比留高校</a>
+    <a href="/school/19" class="list-group-item">全力學園高校</a>
 @endsection
 
 @section('content')
   <div id="carouselExampleIndicators" class="carousel slide my-4" data-ride="carousel">
+    <h2>{{ $deck_detail["deck_title"] }}</h2>
+    <div>
+      {{ $deck_detail["deck_description"] }}
+    </div>
   </div>
 
   <div class="row">
-    <div style="text-align:center;width:100%;">
-      <div class="fb-page" data-href="https://www.facebook.com/pawaresearch/" data-tabs="timeline" data-width="600"
-        data-height="1000" data-small-header="false" data-adapt-container-width="false" data-hide-cover="false"
-        data-show-facepile="true">
-        <blockquote cite="https://www.facebook.com/pawaresearch/" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/pawaresearch/">實況野球研究所</a></blockquote>
-      </div>
+    {{--  顯示圖片內容  --}}
+    <div class="col-lg-4 col-md-6 mb-4">
+      <img src='{{ $deck_detail["pic_1"] }}' width="100%" />
+    </div>
+    <div class="col-lg-4 col-md-6 mb-4">
+      <img src='{{ $deck_detail["pic_2"] }}' width="100%" />
+    </div>
+    <div class="col-lg-4 col-md-6 mb-4">
+      <img src='{{ $deck_detail["pic_3"] }}' width="100%" />
+    </div>
+    <div class="col-lg-4 col-md-6 mb-4">
+      <img src='{{ $deck_detail["pic_4"] }}' width="100%" />
     </div>
   </div>
+
+  <div class="fb-comments" data-href="{{ Request::url() }}" data-width="100%" data-numposts="10"></div>
 @endsection
