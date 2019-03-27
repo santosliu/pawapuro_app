@@ -2,6 +2,8 @@
 @extends('master')
 
 @section('sidebar')
+    <p class="list-group-item">學校快捷列</p>    
+    <a href="/school/22" class="list-group-item">世紀末北斗高校</a>    
     <a href="/school/21" class="list-group-item">邊境高校</a>    
     <a href="/school/20" class="list-group-item">惠比留高校</a>
     <a href="/school/19" class="list-group-item">全力學園高校</a>
@@ -28,7 +30,7 @@
             <p class="card-text">{{ $deck->deck_description }}</p>
           </div>
           <div class="card-footer">
-            <small class="text-muted">登錄時間：{{ substr($deck->updated_at,0,10) }}</small>
+            <small class="text-muted">登錄時間：{{ substr($deck->created_at,0,10) }}</small>
           </div>
         </div>
       </div>

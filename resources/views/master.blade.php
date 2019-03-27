@@ -56,6 +56,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="https://pawamobile.blogspot.com/" target="_blank" class="list-group-item">部落格</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/list/school" target="_blank" class="list-group-item">推薦牌組</a>
+                    </li>
                 </ul>
             </div>
         </div>

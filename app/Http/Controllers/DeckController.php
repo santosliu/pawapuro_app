@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\Decks;
+use App\Models\Schools;
 
 class DeckController extends Controller
 {
@@ -23,5 +24,10 @@ class DeckController extends Controller
         $decks = Decks::where('school', $school_id)->orderBy('created_at', 'desc')->get();
         
         return view('school',compact('decks'));
+    }
+
+    public function schoolList(){
+        $schools = Schools::orderBy('id', 'desc')->get();
+        return view('school_list',compact('schools'));
     }
 }
