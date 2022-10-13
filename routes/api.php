@@ -14,8 +14,15 @@ use Illuminate\Http\Request;
 */
 
 Route::post('/line/receive','LinebotController@msgReceive');
+
 Route::post('/royal/receive','RoyalBotController@msgReceive');
 Route::get('/royal/receive','RoyalBotController@msgReceive');
+
+Route::post('/record/receive','RecordBotController@msgReceive');
+Route::get('/record/receive','RecordBotController@msgReceive');
+
+Route::post('/monica/receive','MonicaBotController@msgReceive');
+Route::get('/monica/receive','MonicaBotController@msgReceive');
 
 // Route::get('/line/send','LinebotController@msgSend');
 

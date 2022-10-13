@@ -5,16 +5,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="實況野球研究所，提供中文化的實況野球手機版資訊">
-    <meta name="author" content="">
+    <meta property="og:image" content="https://i.imgur.com/KDEqAJJ.png" />
 
     <title>實況野球研究所</title>
 
-    <!-- Bootstrap core CSS -->
     <link href="{{ URL::asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
-    <!-- Custom styles for this template -->
     <link href="{{ URL::asset('css/site.css') }}" rel="stylesheet">
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-1603392-13"></script>
     <script>
         window.dataLayer = window.dataLayer || [];

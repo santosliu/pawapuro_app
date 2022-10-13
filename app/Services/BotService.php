@@ -6,7 +6,9 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
 
-use Redis;
+use Log;
+use Response;
+use Illuminate\Support\Facades\Redis;
 
 class BotService
 {
@@ -25,38 +27,51 @@ class BotService
         $this->imgurSealAlbum = config('bot.imgur_seal_album');
         $this->imgurGirlAlbum = config('bot.imgur_girl_album');
         $this->imgurFoodAlbum = config('bot.imgur_food_album');
+
+        $this->channelToken = config('bot.pawapuro.channel_token');
     }
 
     //關鍵字匹配判斷
     public function reconizeKeywords($msg,$keywords,$channelToken,$channelSecret){
-        if ($msg['message']['text'] == '關鍵字') {
-            $keywords_list = "目前可用關鍵字如下：";
+        $reply_token = '';
+        if (isset($msg['replyToken'])) $reply_token = $msg['replyToken'];
+        if ($reply_token != '00000000000000000000000000000000' && $reply_token != 'ffffffffffffffffffffffffffffffff') {
+            // Log::Info('msg:'.json_encode($msg));
             
-            foreach ($keywords as $data) {
-                $keywords_list .= $data->keyword.'、';
-            }    
-
-            $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient($channelToken);
-            $bot = new \LINE\LINEBot($httpClient, ['channelSecret' => $channelSecret]);
-
-            $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($keywords_list);
-            $bot->replyMessage($msg['replyToken'], $textMessageBuilder);
-
-        } else {
-            foreach ($keywords as $data) {
-                if ($data->type == 'part') {
-                    if (strstr($msg['message']['text'],$data->keyword)){
-                        $this->replyByType($data,$msg['replyToken'],$channelToken,$channelSecret);
-                    }
-                } 
+            if (!isset($msg['message']['text'])) {
+                return "";
+            } else if ($msg['message']['text'] == '關鍵字') {
+                $keywords_list = "目前可用關鍵字如下：";
                 
-                if ($data->type == 'full') {
-                    if ($msg['message']['text'] == $data->keyword){
-                        $this->replyByType($data,$msg['replyToken'],$channelToken,$channelSecret);
+                foreach ($keywords as $data) {
+                    $keywords_list .= $data->keyword.'、';
+                }    
+    
+                $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient($channelToken);
+                $bot = new \LINE\LINEBot($httpClient, ['channelSecret' => $channelSecret]);
+    
+                $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($keywords_list);
+                $bot->replyMessage($msg['replyToken'], $textMessageBuilder);
+    
+            } else {
+                foreach ($keywords as $data) {
+                    if ($data->type == 'part') {
+                        if (strstr($msg['message']['text'],$data->keyword)){
+                            $this->replyByType($data,$msg['replyToken'],$channelToken,$channelSecret);
+                        }
+                    } 
+                    
+                    if ($data->type == 'full') {
+                        if ($msg['message']['text'] == $data->keyword){
+                            $this->replyByType($data,$msg['replyToken'],$channelToken,$channelSecret);
+                        }
                     }
                 }
             }
+        } else {
+            return "bot test ok";
         }
+        
     }
 
     //依照 replyType 輸出回應

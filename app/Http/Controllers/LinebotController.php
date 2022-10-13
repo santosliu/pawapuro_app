@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Log;
-use Redis;
+use Illuminate\Support\Facades\Redis;
 use Response;
 
 use App\Http\Controllers\Controller;
@@ -40,8 +40,9 @@ class LinebotController extends Controller
         $this->bot = new \LINE\LINEBot($this->httpClient, ['channelSecret' => $this->channelSecret]);        
 
         if (env('APP_ENV') == 'production') {
-            if (Redis::exists('keywords:'.$this->game.':list')) {
-                $this->keywords = json_decode(Redis::get('keywords:'.$this->game.':list'));
+            $redis_data = Redis::get('keywords:'.$this->game.':list');
+            if (isset($redis_data)) {
+                $this->keywords = json_decode($redis_data);
             } else {
                 $this->keywords = Keywords::where([
                     'game' => $this->game,
@@ -50,7 +51,9 @@ class LinebotController extends Controller
                 Redis::set('keywords:'.$this->game.':list', json_encode($this->keywords), 'EX', 360);
             }
         } else {
-            $this->keywords = Keywords::get();
+            $this->keywords = Keywords::where([
+                'game' => $this->game,
+            ])->get();
         }
 
         $this->imgurClientID = config('bot.imgur_client_id');
@@ -68,18 +71,21 @@ class LinebotController extends Controller
         $keywords = $this->keywords;
 
         foreach ((array)$msgData as $msg) {
-            $replyToken = $msg['replyToken'];
+            $replyToken = '';
+            if (isset($msg['replyToken'])) $replyToken = $msg['replyToken'];
             
-            //抓小光貼的妹子圖丟到 Imgur 上
-            // if ($msg['message']['type'] == 'image') {
-            //     $user_id = $msg['source']['userId'];
-            //     $pic_id = $msg['message']['id'];
+            //抓小光貼的妹子圖
+            $msg_type = '';
+            if (isset($msg['message']['type'])) $msg_type = $msg['message']['type'];
+            if ($msg_type == 'image') {
+                $user_id = $msg['source']['userId'];
+                $pic_id = $msg['message']['id'];
 
-            //     if ($user_id == 'Ueb13bb47744e0b1058177378357c5978') {
-            //         $filename = $service->downloadPic($pic_id);
-            //         $service->uploadAlbum($filename,$this->imgurGirlAlbum);
-            //     }
-            // }
+                if ($user_id == 'Ueb13bb47744e0b1058177378357c5978') {
+                    $filename = $service->downloadPic($pic_id);
+                    // $service->uploadAlbum($filename,$this->imgurGirlAlbum);
+                }
+            }
 
             $service->reconizeKeywords($msg,$keywords,$this->channelToken,$this->channelSecret);
         }

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Log;
-use Redis;
+use Illuminate\Support\Facades\Redis;
 use Response;
 
 use App\Http\Controllers\Controller;
@@ -40,8 +40,9 @@ class RoyalBotController extends Controller
         $this->bot = new \LINE\LINEBot($this->httpClient, ['channelSecret' => $this->channelSecret]);        
 
         if (env('APP_ENV') == 'production') {
-            if (Redis::exists('keywords:royal:list')) {
-                $this->keywords = json_decode(Redis::get('keywords:royal:list'));
+            $redis_data = Redis::get('keywords:royal:list');
+            if ($redis_data) {
+                $this->keywords = json_decode($redis_data);
             } else {
                 $this->keywords = Keywords::where([
                     'game' => 'royal'
@@ -50,7 +51,9 @@ class RoyalBotController extends Controller
                 Redis::set('keywords:royal:list', json_encode($this->keywords), 'EX', 60);
             }
         } else {
-            $this->keywords = Keywords::get();
+            $this->keywords = Keywords::where([
+                'game' => 'royal',
+            ])->get();
         }
 
         $this->imgurClientID = config('bot.imgur_client_id');
@@ -68,9 +71,11 @@ class RoyalBotController extends Controller
         $keywords = $this->keywords;
 
         foreach ($msgData as $msg) {
-            $replyToken = $msg['replyToken'];
+            $replyToken = '';
+            if (isset($msg['replyToken'])) $replyToken = $msg['replyToken'];
 
             if ($msg['type'] == 'memberLeft') {
+                Log::Info('left:'.json_encode($msg));
                 $text = "啊啊～又一位英勇的戰士離開了～
                 祝他一路順風，頭髮茂盛～";
                 $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($text);
