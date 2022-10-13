@@ -1646,26 +1646,24 @@
         },
         {
             "name": "linecorp/line-bot-sdk",
-            "version": "3.15.0",
+            "version": "3.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/line/line-bot-sdk-php.git",
-                "reference": "c0d9e32a910378598b59e358d757a9f801da1e98"
+                "reference": "e1515090eaf2106efdbdf51b1a6adf812844f54f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/line/line-bot-sdk-php/zipball/c0d9e32a910378598b59e358d757a9f801da1e98",
-                "reference": "c0d9e32a910378598b59e358d757a9f801da1e98",
+                "url": "https://api.github.com/repos/line/line-bot-sdk-php/zipball/e1515090eaf2106efdbdf51b1a6adf812844f54f",
+                "reference": "e1515090eaf2106efdbdf51b1a6adf812844f54f",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
                 "ext-json": "*",
-                "ext-sockets": "*",
                 "php": ">=5.5"
             },
             "require-dev": {
-                "ext-posix": "*",
                 "indigophp/hash-compat": "~1.1.0",
                 "phpmd/phpmd": "~2.4",
                 "phpunit/phpunit": "^4.8.24||^5||^6",
@@ -1702,11 +1700,6 @@
                     "name": "Satoshi Shibuya",
                     "email": "satosby@gmail.com",
                     "role": "Maintainer"
-                },
-                {
-                    "name": "Shunsuke Mori",
-                    "email": "morimorim7180@gmail.com",
-                    "role": "Maintainer"
                 }
             ],
             "description": "SDK of the LINE BOT API for PHP",
@@ -1718,9 +1711,9 @@
             ],
             "support": {
                 "issues": "https://github.com/line/line-bot-sdk-php/issues",
-                "source": "https://github.com/line/line-bot-sdk-php/tree/master"
+                "source": "https://github.com/line/line-bot-sdk-php/tree/3.6.0"
             },
-            "time": "2019-11-01T09:49:14+00:00"
+            "time": "2018-10-26T03:59:54+00:00"
         },
         {
             "name": "monolog/monolog",
