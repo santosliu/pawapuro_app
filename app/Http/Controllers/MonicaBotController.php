@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Log;
-use Illuminate\Support\Facades\Redis;
+use Redis;
 use Response;
 
 use App\Http\Controllers\Controller;
@@ -13,7 +13,7 @@ use App\Models\Keywords;
 use App\Services\BotService;
 use GuzzleHttp\Client;
 
-class LinebotController extends Controller
+class MonicaBotController extends Controller
 {
     private $channelToken;
     private $channelSecret;
@@ -31,29 +31,26 @@ class LinebotController extends Controller
 
     public function __construct()
     {
-        $this->game = 'pawapuro';
-        $this->channelToken = config('bot.pawapuro.channel_token');
-        $this->channelSecret = config('bot.pawapuro.channel_secret');
-        $this->channelId = config('bot.pawapuro.channel_id');
+
+        $this->channelToken = config('bot.monica.channel_token');
+        $this->channelSecret = config('bot.monica.channel_secret');
+        $this->channelId = config('bot.monica.channel_id');
         
         $this->httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient($this->channelToken);
         $this->bot = new \LINE\LINEBot($this->httpClient, ['channelSecret' => $this->channelSecret]);        
 
         if (env('APP_ENV') == 'production') {
-            $redis_data = Redis::get('keywords:'.$this->game.':list');
-            if (isset($redis_data)) {
-                $this->keywords = json_decode($redis_data);
+            if (Redis::exists('keywords:monica:list')) {
+                $this->keywords = json_decode(Redis::get('keywords:monica:list'));
             } else {
                 $this->keywords = Keywords::where([
-                    'game' => $this->game,
+                    'game' => 'monica'
                 ])->get();
-
-                Redis::set('keywords:'.$this->game.':list', json_encode($this->keywords), 'EX', 360);
+                
+                Redis::set('keywords:monica:list', json_encode($this->keywords), 'EX', 60);
             }
         } else {
-            $this->keywords = Keywords::where([
-                'game' => $this->game,
-            ])->get();
+            $this->keywords = Keywords::get();
         }
 
         $this->imgurClientID = config('bot.imgur_client_id');
@@ -70,24 +67,23 @@ class LinebotController extends Controller
         $service = new BotService();
         $keywords = $this->keywords;
 
-        foreach ((array)$msgData as $msg) {
+        foreach ($msgData as $msg) {
             $replyToken = '';
             if (isset($msg['replyToken'])) $replyToken = $msg['replyToken'];
-            
-            //抓小光貼的妹子圖
-            $msg_type = '';
-            if (isset($msg['message']['type'])) $msg_type = $msg['message']['type'];
-            if ($msg_type == 'image') {
-                $user_id = $msg['source']['userId'];
-                $pic_id = $msg['message']['id'];
 
-                if ($user_id == 'Ueb13bb47744e0b1058177378357c5978') {
-                    $filename = $service->downloadPic($pic_id);
-                    // $service->uploadAlbum($filename,$this->imgurGirlAlbum);
-                }
+            //加入簡介
+            if ($msg['type'] == 'memberJoined') {
+                foreach ($keywords as $data) {
+                    if ($data->type == 'member_join') {
+                        $text = $data->reply_content;
+                        $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($text);
+                        $this->bot->replyMessage($replyToken, $textMessageBuilder);
+                    }
+                }                
             }
 
             $service->reconizeKeywords($msg,$keywords,$this->channelToken,$this->channelSecret);
+
         }
     }
 

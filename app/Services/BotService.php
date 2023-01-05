@@ -6,7 +6,11 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
 
-use Redis;
+use Log;
+use Response;
+use Illuminate\Support\Facades\Redis;
+
+use App\Models\Message_Records;
 
 class BotService
 {
@@ -25,38 +29,51 @@ class BotService
         $this->imgurSealAlbum = config('bot.imgur_seal_album');
         $this->imgurGirlAlbum = config('bot.imgur_girl_album');
         $this->imgurFoodAlbum = config('bot.imgur_food_album');
+
+        $this->channelToken = config('bot.pawapuro.channel_token');
     }
 
     //關鍵字匹配判斷
     public function reconizeKeywords($msg,$keywords,$channelToken,$channelSecret){
-        if ($msg['message']['text'] == '關鍵字') {
-            $keywords_list = "目前可用關鍵字如下：";
+        $reply_token = '';
+        if (isset($msg['replyToken'])) $reply_token = $msg['replyToken'];
+        if ($reply_token != '00000000000000000000000000000000' && $reply_token != 'ffffffffffffffffffffffffffffffff') {
+            // Log::Info('msg:'.json_encode($msg));
             
-            foreach ($keywords as $data) {
-                $keywords_list .= $data->keyword.'、';
-            }    
-
-            $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient($channelToken);
-            $bot = new \LINE\LINEBot($httpClient, ['channelSecret' => $channelSecret]);
-
-            $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($keywords_list);
-            $bot->replyMessage($msg['replyToken'], $textMessageBuilder);
-
-        } else {
-            foreach ($keywords as $data) {
-                if ($data->type == 'part') {
-                    if (strstr($msg['message']['text'],$data->keyword)){
-                        $this->replyByType($data,$msg['replyToken'],$channelToken,$channelSecret);
-                    }
-                } 
+            if (!isset($msg['message']['text'])) {
+                return "";
+            } else if ($msg['message']['text'] == '關鍵字') {
+                $keywords_list = "目前可用關鍵字如下：";
                 
-                if ($data->type == 'full') {
-                    if ($msg['message']['text'] == $data->keyword){
-                        $this->replyByType($data,$msg['replyToken'],$channelToken,$channelSecret);
+                foreach ($keywords as $data) {
+                    $keywords_list .= $data->keyword.'、';
+                }    
+    
+                $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient($channelToken);
+                $bot = new \LINE\LINEBot($httpClient, ['channelSecret' => $channelSecret]);
+    
+                $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($keywords_list);
+                $bot->replyMessage($msg['replyToken'], $textMessageBuilder);
+    
+            } else {
+                foreach ($keywords as $data) {
+                    if ($data->type == 'part') {
+                        if (strstr($msg['message']['text'],$data->keyword)){
+                            $this->replyByType($data,$msg['replyToken'],$channelToken,$channelSecret);
+                        }
+                    } 
+                    
+                    if ($data->type == 'full') {
+                        if ($msg['message']['text'] == $data->keyword){
+                            $this->replyByType($data,$msg['replyToken'],$channelToken,$channelSecret);
+                        }
                     }
                 }
             }
+        } else {
+            return "bot test ok";
         }
+        
     }
 
     //依照 replyType 輸出回應
@@ -153,5 +170,77 @@ class BotService
         curl_setopt($curl, CURLOPT_POSTFIELDS, $pvars);
         $response = curl_exec($curl);
         curl_close ($curl);
+    }
+
+    /*
+    *   更新最後發言時間
+    */
+    public function updateRecords($msgData){
+
+        // Log::info('record:'.json_encode($msgData));
+
+        foreach ($msgData as $msg) {
+            $user_id = ''; $last_message = '貼圖/影片或傳檔'; $group_id = ''; $user_name = '';
+            
+            if (isset($msg['source']['userId'])) {
+                $user_id = $msg['source']['userId'];
+
+                // 取得 profile
+                $profile = $this->getUserProfile($user_id);
+            }
+
+            if (isset($msg['message']['text'])) {
+                $last_message = $msg['message']['text'];
+            }
+
+            if (isset($msg['source']['groupId'])) {
+                $group_id = $msg['source']['groupId'];
+            }
+
+            if (strlen($user_id) > 3) {
+                $record = Message_Records::where([
+                    'user_id' => $user_id,
+                    'group_id' => $group_id
+                ])->first();
+                
+                if (!$record) {
+                    $record = new Message_Records();
+                }
+                
+                $record->user_id = $user_id;
+                $record->group_id = $group_id;
+                $record->last_message = $last_message;
+                $record->message_count = $record->message_count + 1;
+                $record->save();
+            }
+        }
+
+        
+
+    }
+
+    /*
+    *   取得帳號資訊
+    */
+    public function getUserProfile($user_id){
+        //https://api.line.me/v2/bot/profile/
+
+        $url = "https://api.line.me/v2/bot/profile/".$user_id;
+
+        $client = new Client();
+        // $response = $client->get('https://api.line.me/v2/bot/message/'.$pic_id.'/content',[
+        $response = $client->get('https://api.line.me/v2/bot/profile/'.$user_id,[
+            'verify' => false,
+            'headers' => [
+                'Authorization' => 'Bearer '.$this->channelToken,
+            ],
+        ]);
+        
+        $profile = $response->getBody();
+        // $filename = storage_path('girls/'.uniqid().'.png');
+        // file_put_contents($filename, $imageBody);
+        Log::Info('profile:'.json_encode($profile))
+        
+        return $profile;
     }
 }

@@ -2,12 +2,19 @@
 @extends('master')
 
 @section('sidebar')
+    <a href="/school/23" class="list-group-item">艦隊高校</a>
+    <a href="/school/22" class="list-group-item">世紀末北斗高校</a>    
     <a href="/school/21" class="list-group-item">邊境高校</a>    
     <a href="/school/20" class="list-group-item">惠比留高校</a>
     <a href="/school/19" class="list-group-item">全力學園高校</a>
 @endsection
 
 @section('content')
+
+{{--  <!-- 插入適合的 title 和 description -->
+<title>{{ $deck_detail["deck_title"] }} @ 實況野球研究所</title>
+<description>{{ $deck_detail["deck_description"] }}</description>  --}}
+
   <div id="carouselExampleIndicators" class="carousel slide my-4" data-ride="carousel">
     <h2>{{ $deck_detail["deck_title"] }}</h2>
     <div>

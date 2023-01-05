@@ -16,13 +16,14 @@ class DeckController extends Controller
 {
     public function byDeck($deck_id){
         $deck_detail = Decks::where('id', $deck_id)->first();
-       
+        
         return view('deck',compact('deck_detail'));
     }
 
     public function bySchool($school_id){
-        $decks = Decks::where('school', $school_id)->orderBy('created_at', 'desc')->get();
-        
+        $decks = Decks::where('school_id', $school_id)->orderBy('created_at', 'desc')->get();
+        // if (is_null($decks)) return view('');
+
         return view('school',compact('decks'));
     }
 
